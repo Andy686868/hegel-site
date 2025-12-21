@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dealer_requests",
+  "info": {
+    "singularName": "dealer-request",
+    "pluralName": "dealer-requests",
+    "displayName": "Dealer-Request"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "text"
+    },
+    "City": {
+      "type": "text"
+    },
+    "Occupation": {
+      "type": "enumeration",
+      "enum": [
+        "Монтажник",
+        "Проектировщик",
+        "Магазин"
+      ]
+    },
+    "Phone": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "email"
+    },
+    "Message": {
+      "type": "text"
+    }
+  }
+}
