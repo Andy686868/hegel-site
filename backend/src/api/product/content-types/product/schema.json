@@ -99,6 +99,21 @@
     },
     "Description": {
       "type": "text"
+    },
+    "Amperage": {
+      "type": "enumeration",
+      "enum": [
+        "amp10",
+        "amp16"
+      ]
+    },
+    "PlateType": {
+      "type": "enumeration",
+      "enum": [
+        "Без пластин (1)",
+        "Изолирующая (3)",
+        "Монтажная (5)"
+      ]
     }
   }
 }

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_manual_variants_manual_variants",
+  "info": {
+    "displayName": "ManualVariants"
+  },
+  "options": {},
+  "attributes": {
+    "FullSKU": {
+      "type": "string"
+    },
+    "VariantImage": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  },
+  "config": {}
+}

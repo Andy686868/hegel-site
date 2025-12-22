@@ -1,0 +1,106 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product2s",
+  "info": {
+    "singularName": "product2",
+    "pluralName": "product2s",
+    "displayName": "Product_switch"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Name"
+    },
+    "Series": {
+      "type": "enumeration",
+      "enum": [
+        "Alfa",
+        "Master"
+      ]
+    },
+    "Description": {
+      "type": "text"
+    },
+    "Voltage": {
+      "type": "string"
+    },
+    "Dimensions": {
+      "type": "string"
+    },
+    "MainImage": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "BaseSKU": {
+      "type": "string"
+    },
+    "has10A": {
+      "type": "boolean"
+    },
+    "has16A": {
+      "type": "boolean"
+    },
+    "plate1": {
+      "type": "boolean"
+    },
+    "plate2": {
+      "type": "boolean"
+    },
+    "plate3": {
+      "type": "boolean"
+    },
+    "plate4": {
+      "type": "boolean"
+    },
+    "plate5": {
+      "type": "boolean"
+    },
+    "plate6": {
+      "type": "boolean"
+    },
+    "AvailableColors": {
+      "type": "string"
+    },
+    "ManualVariants": {
+      "type": "component",
+      "component": "manual-variants.manual-variants",
+      "repeatable": true
+    },
+    "Constraints": {
+      "type": "json"
+    },
+    "GalleryImages": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "SchemaImages": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

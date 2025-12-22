@@ -481,6 +481,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    Amperage: Schema.Attribute.Enumeration<['amp10', 'amp16']>;
     Color: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -507,6 +508,13 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     Passport_PDF: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
+    PlateType: Schema.Attribute.Enumeration<
+      [
+        '\u0411\u0435\u0437 \u043F\u043B\u0430\u0441\u0442\u0438\u043D (1)',
+        '\u0418\u0437\u043E\u043B\u0438\u0440\u0443\u044E\u0449\u0430\u044F (3)',
+        '\u041C\u043E\u043D\u0442\u0430\u0436\u043D\u0430\u044F (5)',
+      ]
+    >;
     publishedAt: Schema.Attribute.DateTime;
     Series: Schema.Attribute.Enumeration<
       [
@@ -530,6 +538,66 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProduct2Product2 extends Struct.CollectionTypeSchema {
+  collectionName: 'product2s';
+  info: {
+    displayName: 'Product_switch';
+    pluralName: 'product2s';
+    singularName: 'product2';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    AvailableColors: Schema.Attribute.String;
+    BaseSKU: Schema.Attribute.String;
+    Constraints: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    Dimensions: Schema.Attribute.String;
+    GalleryImages: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    has10A: Schema.Attribute.Boolean;
+    has16A: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product2.product2'
+    > &
+      Schema.Attribute.Private;
+    MainImage: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    ManualVariants: Schema.Attribute.Component<
+      'manual-variants.manual-variants',
+      true
+    >;
+    Name: Schema.Attribute.String;
+    plate1: Schema.Attribute.Boolean;
+    plate2: Schema.Attribute.Boolean;
+    plate3: Schema.Attribute.Boolean;
+    plate4: Schema.Attribute.Boolean;
+    plate5: Schema.Attribute.Boolean;
+    plate6: Schema.Attribute.Boolean;
+    publishedAt: Schema.Attribute.DateTime;
+    SchemaImages: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    Series: Schema.Attribute.Enumeration<['Alfa', 'Master']>;
+    Slug: Schema.Attribute.UID<'Name'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Voltage: Schema.Attribute.String;
   };
 }
 
@@ -1045,6 +1113,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::dealer-request.dealer-request': ApiDealerRequestDealerRequest;
       'api::product.product': ApiProductProduct;
+      'api::product2.product2': ApiProduct2Product2;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
