@@ -592,11 +592,12 @@ export interface ApiProduct2Product2 extends Struct.CollectionTypeSchema {
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
-    Series: Schema.Attribute.Enumeration<['Alfa', 'Master']>;
+    Series: Schema.Attribute.Enumeration<['Alfa', 'Master', 'Alfa IP44']>;
     Slug: Schema.Attribute.UID<'Name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    Vlaga: Schema.Attribute.Enumeration<['IP20', 'IP44']>;
     Voltage: Schema.Attribute.String;
   };
 }
