@@ -7,9 +7,22 @@ export interface ProductScenario {
   generateSKU: (params: any) => string;
 }
 
-export const getScenario = (baseSKU: string, series?: string): ProductScenario => {
+export const getScenario = (baseSKU: string, series?: string, isBox?: boolean): ProductScenario => {
   const isMaster = series === "Master";
   const isAlfaIP44 = series === "Alfa IP44";
+
+  // 0. КАТЕГОРИЯ: МОНТАЖНЫЕ КОРОБКИ (Новый тип)
+  // Проверяем по флагу из БД или по характерным префиксам
+  const isBoxProduct = isBox || ["КУ", "КР", "У1", "КРК"].some(pref => baseSKU?.startsWith(pref));
+
+  if (isBoxProduct) {
+    return {
+      showAmps: false,
+      showShutters: false,
+      showPlates: false,
+      generateSKU: () => baseSKU // Для коробок SKU обычно совпадает с базовым
+    };
+  }
 
   // 1. КАТЕГОРИЯ: РАМКИ (Р1, Р2, Р3, Р4, Р5)
   const isFrame = baseSKU?.startsWith("Р") && 
@@ -79,28 +92,23 @@ export const getScenario = (baseSKU: string, series?: string): ProductScenario =
       if (baseSKU?.startsWith("БА")) typePrefix = "БА";
       if (baseSKU?.startsWith("ВС")) typePrefix = "ВС";
 
-      // Специфика Master: меняем ВС на ВА при 16А
       if (isMaster && isSwitch) {
         typePrefix = amp === "16" ? "ВА" : "ВС";
       }
 
       const colorSuffix = color !== "00" ? `-${color}` : "";
 
-      // --- ЛОГИКА MASTER (3-я серия) ---
       if (isMaster) {
         if (isSwitch) {
-          // Просто переносим 3 цифры: ВС10-311
           return `${typePrefix}${amp}-${mechDigits}${colorSuffix}`;
         }
         if (isSocket) {
-          // Для розеток: РС16-401 (без шторок) или РС16-402 (со шторками)
           const socketBase = mechDigits.slice(0, 2); 
           const lastDigit = shutters ? "2" : "1";
           return `${typePrefix}${amp}-${socketBase}${lastDigit}${colorSuffix}`;
         }
       }
 
-      // --- ЛОГИКА ALFA IP44 ---
       if (isAlfaIP44) {
         if (isBlock) {
           const first = mechDigits.charAt(0);
@@ -115,7 +123,6 @@ export const getScenario = (baseSKU: string, series?: string): ProductScenario =
         return `${typePrefix}${amp}-2${mechDigits}${colorSuffix}`;
       }
 
-      // --- ЛОГИКА СТАНДАРТ (БАЗОВАЯ) ---
       const mechBase = mechDigits.slice(0, 2); 
       let lastDigit = "1";
       if (isSocketOrBlock) {

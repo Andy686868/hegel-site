@@ -470,74 +470,82 @@ export interface ApiDealerRequestDealerRequest
   };
 }
 
-export interface ApiProductProduct extends Struct.CollectionTypeSchema {
-  collectionName: 'products';
+export interface ApiProductBoxProductBox extends Struct.CollectionTypeSchema {
+  collectionName: 'product_boxes';
   info: {
-    displayName: 'Product';
-    pluralName: 'products';
-    singularName: 'product';
+    displayName: 'Product_box';
+    pluralName: 'product-boxes';
+    singularName: 'product-box';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    Amperage: Schema.Attribute.Enumeration<['amp10', 'amp16']>;
-    Color: Schema.Attribute.String;
+    BaseSKU: Schema.Attribute.String;
+    CenterDist: Schema.Attribute.String;
+    CertificateFiles: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    Description: Schema.Attribute.Text;
-    Drawing: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    Dimensions: Schema.Attribute.String;
+    FireResistance: Schema.Attribute.String;
     Images: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
-    IP_Rating: Schema.Attribute.Enumeration<
-      ['IP20', 'IP30', 'IP40', 'IP44', 'IP54', 'IP55', 'IP65', 'IP66']
-    >;
-    Is_Individual_Pack: Schema.Attribute.Boolean;
+    InnerSize: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::product.product'
+      'api::product-box.product-box'
     > &
       Schema.Attribute.Private;
-    Material: Schema.Attribute.String;
-    Mounting_Type: Schema.Attribute.String;
-    Name: Schema.Attribute.Text;
-    Passport_PDF: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios'
-    >;
-    PlateType: Schema.Attribute.Enumeration<
+    Material: Schema.Attribute.Enumeration<
       [
-        '\u0411\u0435\u0437 \u043F\u043B\u0430\u0441\u0442\u0438\u043D (1)',
-        '\u0418\u0437\u043E\u043B\u0438\u0440\u0443\u044E\u0449\u0430\u044F (3)',
-        '\u041C\u043E\u043D\u0442\u0430\u0436\u043D\u0430\u044F (5)',
+        '\u041F\u043E\u043B\u0438\u043F\u0440\u043E\u043F\u0438\u043B\u0435\u043D',
+        '\u041F\u043E\u043B\u0438\u043F\u0440\u043E\u043F\u0438\u043B\u0435\u043D \u0441 \u0430\u043D\u0442\u0438\u043F\u0438\u0440\u0435\u043D\u043E\u043C',
+        '\u041F\u043E\u043B\u0438\u043F\u0440\u043E\u043F\u0438\u043B\u0435\u043D \u0438  \u041F\u0412\u0414',
+        '\u041E\u0441\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u043F\u043E\u043B\u0438\u043F\u0440\u043E\u043F\u0438\u043B\u0435\u043D, \u043A\u0440\u044B\u0448\u043A\u0430 \u0443\u0434\u0430\u0440\u043E\u043F\u0440\u043E\u0447\u043D\u044B\u0439 \u043F\u043E\u043B\u0438\u0441\u0442\u0438\u0440\u043E\u043B',
       ]
     >;
+    ModelFiles: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    Name: Schema.Attribute.String;
+    NicheSize: Schema.Attribute.String;
+    PackCount: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    SchemaFiles: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
     Series: Schema.Attribute.Enumeration<
+      ['series11', 'series12', 'series13', 'series25', 'series26', 'series27']
+    >;
+    SketchFiles: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    Slug: Schema.Attribute.UID<'Name'>;
+    TechParams: Schema.Attribute.String;
+    Type: Schema.Attribute.Enumeration<
       [
-        '\u0421\u0435\u0440\u0438\u044F 11',
-        '\u0421\u0435\u0440\u0438\u044F 12',
-        '\u0421\u0435\u0440\u0438\u044F 13',
-        '\u0421\u0435\u0440\u0438\u044F 24',
-        '\u0421\u0435\u0440\u0438\u044F 25',
-        '\u0421\u0435\u0440\u0438\u044F 26',
-        '\u0421\u0435\u0440\u0438\u044F 27',
-        '\u0421\u0435\u0440\u0438\u044F 28',
-        'ALFA',
-        'MASTER',
-        '\u0421\u0436\u0438\u043C\u044B',
-        '\u0410\u043A\u0441\u0435\u0441\u0441\u0443\u0430\u0440\u044B',
+        '\u0421\u043F\u043B\u043E\u0448\u043D\u044B\u0435 \u0441\u0442\u0435\u043D\u044B',
+        '\u041F\u043E\u043B\u044B\u0435 \u0441\u0442\u0435\u043D\u044B \u0438 \u043F\u0435\u0440\u0435\u0433\u043E\u0440\u043E\u0434\u043A\u0438',
+        '\u0414\u043B\u044F \u043C\u043E\u043D\u043E\u043B\u0438\u0442\u043D\u043E\u0433\u043E \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430',
+        '\u041E\u0442\u043A\u0440\u044B\u0442\u043E\u0439 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0438',
       ]
     >;
-    SKU: Schema.Attribute.String & Schema.Attribute.Unique;
-    Slug: Schema.Attribute.UID<'Name'>;
-    Type: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    Vlaga: Schema.Attribute.String & Schema.Attribute.DefaultTo<'IP20'>;
+    Voltage: Schema.Attribute.String & Schema.Attribute.DefaultTo<'400\u0412'>;
+    WorkingTemp: Schema.Attribute.String;
   };
 }
 
@@ -1113,7 +1121,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::dealer-request.dealer-request': ApiDealerRequestDealerRequest;
-      'api::product.product': ApiProductProduct;
+      'api::product-box.product-box': ApiProductBoxProductBox;
       'api::product2.product2': ApiProduct2Product2;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

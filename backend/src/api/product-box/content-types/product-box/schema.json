@@ -1,0 +1,136 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_boxes",
+  "info": {
+    "singularName": "product-box",
+    "pluralName": "product-boxes",
+    "displayName": "Product_box"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Name"
+    },
+    "BaseSKU": {
+      "type": "string"
+    },
+    "Images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "PackCount": {
+      "type": "string"
+    },
+    "InnerSize": {
+      "type": "string"
+    },
+    "NicheSize": {
+      "type": "string"
+    },
+    "CenterDist": {
+      "type": "string"
+    },
+    "Voltage": {
+      "type": "string",
+      "default": "400В"
+    },
+    "Vlaga": {
+      "type": "string",
+      "default": "IP20"
+    },
+    "FireResistance": {
+      "type": "string"
+    },
+    "Dimensions": {
+      "type": "string"
+    },
+    "SchemaFiles": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "CertificateFiles": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "SketchFiles": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "ModelFiles": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Series": {
+      "type": "enumeration",
+      "enum": [
+        "series11",
+        "series12",
+        "series13",
+        "series25",
+        "series26",
+        "series27"
+      ]
+    },
+    "WorkingTemp": {
+      "type": "string"
+    },
+    "Material": {
+      "type": "enumeration",
+      "enum": [
+        "Полипропилен",
+        "Полипропилен с антипиреном",
+        "Полипропилен и  ПВД",
+        "Основание полипропилен, крышка ударопрочный полистирол"
+      ]
+    },
+    "TechParams": {
+      "type": "string"
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "Сплошные стены",
+        "Полые стены и перегородки",
+        "Для монолитного строительства",
+        "Открытой установки"
+      ]
+    }
+  }
+}

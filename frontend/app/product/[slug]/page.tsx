@@ -13,6 +13,7 @@ import ProductDesignTab from './tabs/ProductDesignTab';
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [product, setProduct] = useState<any>(null);
+  const [isBox, setIsBox] = useState(false); // Флаг типа продукта
   const [loading, setLoading] = useState(true);
   const [selectedAmp, setSelectedAmp] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -30,18 +31,43 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     async function fetchData() {
       try {
         const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337';
-        const res = await fetch(`${strapiUrl}/api/product2s?filters[Slug][$eq]=${slug}&populate=*`);
-        const json = await res.json();
-        if (json.data?.[0]) {
-          const data = json.data[0];
-          setProduct(data);
-          if (data.has10A) setSelectedAmp("10"); else if (data.has16A) setSelectedAmp("16");
-          const availableColors = data.AvailableColors?.split(',').map((c: string) => c.trim()) || [];
-          setSelectedColor(availableColors[0]);
-          if (data.MainImage?.length > 0) setCurrentMainUrl(data.MainImage[0].url);
-          if (data.SchemaImages?.length > 0) setCurrentSchemaUrl(data.SchemaImages[0].url);
+        
+        // 1. Пытаемся найти в обычных изделиях (product2s)
+        let res = await fetch(`${strapiUrl}/api/product2s?filters[Slug][$eq]=${slug}&populate=*`);
+        let json = await res.json();
+        let foundData = json.data?.[0];
+        let foundIsBox = false;
+
+        // 2. Если не нашли, ищем в монтажных коробках (boxes)
+        if (!foundData) {
+          res = await fetch(`${strapiUrl}/api/product-boxes?filters[Slug][$eq]=${slug}&populate=*`);
+          json = await res.json();
+          foundData = json.data?.[0];
+          foundIsBox = !!foundData;
         }
-      } catch (err) { console.error(err); } finally { setLoading(false); }
+
+        if (foundData) {
+          setProduct(foundData);
+          setIsBox(foundIsBox);
+          
+          // Дефолтные настройки для механизмов
+          if (!foundIsBox) {
+            if (foundData.has10A) setSelectedAmp("10"); else if (foundData.has16A) setSelectedAmp("16");
+            const availableColors = foundData.AvailableColors?.split(',').map((c: string) => c.trim()) || [];
+            setSelectedColor(availableColors[0]);
+          }
+
+          // Установка изображений
+          if (foundData.MainImage?.length > 0) setCurrentMainUrl(foundData.MainImage[0].url);
+          // Для коробок схема может быть в TechnicalSketch или SchemaImages
+          const schema = foundData.TechnicalSketch?.url || foundData.SchemaImages?.[0]?.url;
+          if (schema) setCurrentSchemaUrl(schema);
+        }
+      } catch (err) { 
+        console.error("Fetch error:", err); 
+      } finally { 
+        setLoading(false); 
+      }
     }
     fetchData();
   }, [slug]);
@@ -49,8 +75,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   if (loading) return <div className="p-20 text-center font-bold text-slate-400 animate-pulse tracking-widest uppercase">Загрузка...</div>;
   if (!product) return <div className="p-20 text-center font-bold text-red-500">ТОВАР НЕ НАЙДЕН</div>;
 
+  // Передаем флаг isBox в сценарий
   const scenario = getScenario(product.BaseSKU, product.Series);
-  const finalSKU = scenario.generateSKU({ amp: selectedAmp, color: selectedColor, plateType: selectedPlateType, shutters: hasShutters });
+  const finalSKU = isBox ? product.BaseSKU : scenario.generateSKU({ amp: selectedAmp, color: selectedColor, plateType: selectedPlateType, shutters: hasShutters });
   const currentRule = product.Constraints?.[selectedColor];
 
   const handleColorChange = (color: string) => {
@@ -86,17 +113,17 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         <div className="bg-white rounded-[40px] shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 border border-slate-100">
           <div ref={previewRef} className="p-8 flex flex-col items-center justify-center border-r border-slate-100 relative min-h-[600px]"
             style={{ 
-              backgroundColor: activeTab === 'design' && !customBg ? bgPreview : (activeTab === 'main' ? '#064e3b' : '#f8fafc'),
-              backgroundImage: activeTab === 'design' && customBg ? `url(${customBg})` : (activeTab === 'main' ? 'radial-gradient(circle at 50% 50%, #059669 0%, #064e3b 65%, #022c22 100%)' : 'none'),
+              backgroundColor: activeTab === 'design' && !customBg ? bgPreview : (activeTab === 'main' ? (isBox ? '#f1f5f9' : '#064e3b') : '#f8fafc'),
+              backgroundImage: activeTab === 'design' && customBg ? `url(${customBg})` : (activeTab === 'main' && !isBox ? 'radial-gradient(circle at 50% 50%, #059669 0%, #064e3b 65%, #022c22 100%)' : 'none'),
               backgroundSize: 'cover', backgroundPosition: 'center'
             }}>
             <div className={`relative transition-all duration-500 overflow-hidden group rounded-2xl ${activeTab === 'design' ? 'w-[320px] h-[320px]' : 'w-[420px] h-[420px]'}`} onMouseMove={handleMouseMove}>
                 <Image src={activeTab === 'design' ? getDesignerImage() : (activeTab === 'pro' ? getStrapiImageUrl(currentSchemaUrl) : getStrapiImageUrl(currentMainUrl))} alt="view" fill className={`object-contain transition-transform duration-200 ${activeTab === 'main' ? 'group-hover:scale-[2.5] cursor-zoom-in' : ''} ${activeTab !== 'pro' ? 'drop-shadow-2xl' : ''}`} style={activeTab === 'main' ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}} unoptimized />
             </div>
-            {activeTab === 'main' && (
-               <div className="flex gap-2 mt-8">{(product.MainImage || []).map((img: any) => (
+            {activeTab === 'main' && product.MainImage?.length > 1 && (
+                <div className="flex gap-2 mt-8">{(product.MainImage || []).map((img: any) => (
                     <button key={img.url} onClick={() => setCurrentMainUrl(img.url)} className={`w-14 h-14 rounded-xl border-2 overflow-hidden shadow-sm transition-all ${currentMainUrl === img.url ? 'border-yellow-400 scale-110 shadow-lg' : 'border-slate-600 opacity-50'}`}><Image src={getStrapiImageUrl(img.url)} alt="thumb" width={56} height={56} className="object-cover" unoptimized /></button>
-                 ))}</div>
+                  ))}</div>
             )}
             {activeTab !== 'design' && (
               <div className="mt-8 bg-white/90 backdrop-blur-md px-10 py-4 rounded-3xl shadow-xl border border-white/50 text-center">
@@ -108,19 +135,21 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
           <div className="p-10 lg:p-14 flex flex-col bg-slate-50/30">
             <div className="flex gap-8 mb-8 border-b border-slate-200">
-              {[{ id: 'main', label: 'Информация' }, { id: 'pro', label: <span>Инженерам/<br />монтажникам</span> }, { id: 'design', label: 'Дизайнерам' }].map(tab => (
-                <button key={tab.id as string} onClick={() => setActiveTab(tab.id as string)} className={`pb-4 text-[12px] font-black uppercase tracking-widest transition-all text-left ${activeTab === tab.id ? 'text-green-700 border-b-4 border-green-700' : 'text-slate-400 hover:text-slate-600'}`}> {tab.label} </button>
+              {[{ id: 'main', label: 'Информация' }, { id: 'pro', label: <span>Инженерам/<br />монтажникам</span> }, 
+                !isBox && { id: 'design', label: 'Дизайнерам' } // Скрываем дизайн для коробок
+              ].filter(Boolean).map((tab: any) => (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`pb-4 text-[12px] font-black uppercase tracking-widest transition-all text-left ${activeTab === tab.id ? 'text-green-700 border-b-4 border-green-700' : 'text-slate-400 hover:text-slate-600'}`}> {tab.label} </button>
               ))}
             </div>
 
             <div className="flex-grow">
-              {activeTab === 'main' && <ProductInfoTab product={product} scenario={scenario} selectedAmp={selectedAmp} setSelectedAmp={setSelectedAmp} selectedColor={selectedColor} setSelectedPlateType={setSelectedPlateType} selectedPlateType={selectedPlateType} hasShutters={hasShutters} setHasShutters={setHasShutters} currentRule={currentRule} setActiveTab={setActiveTab} />}
-              {activeTab === 'pro' && <ProductProTab product={product} />}
-              {activeTab === 'design' && <ProductDesignTab product={product} selectedColor={selectedColor} handleColorChange={handleColorChange} bgPreview={bgPreview} setBgPreview={setBgPreview} setCustomBg={setCustomBg} customBg={customBg} exportAsImage={exportAsImage} currentRule={currentRule} />}
+              {activeTab === 'main' && <ProductInfoTab product={product} scenario={scenario} isBox={isBox} selectedAmp={selectedAmp} setSelectedAmp={setSelectedAmp} selectedColor={selectedColor} setSelectedPlateType={setSelectedPlateType} selectedPlateType={selectedPlateType} hasShutters={hasShutters} setHasShutters={setHasShutters} currentRule={currentRule} setActiveTab={setActiveTab} />}
+              {activeTab === 'pro' && <ProductProTab product={product} isBox={isBox} />}
+              {activeTab === 'design' && !isBox && <ProductDesignTab product={product} selectedColor={selectedColor} handleColorChange={handleColorChange} bgPreview={bgPreview} setBgPreview={setBgPreview} setCustomBg={setCustomBg} customBg={customBg} exportAsImage={exportAsImage} currentRule={currentRule} />}
             </div>
 
             <div className="mt-8 pt-6 border-t border-slate-200">
-               <AddToEstimateBtn product={{ ...product, id: `${product.id}-${finalSKU}`, SKU: finalSKU, Name: `${product.Name} (${finalSKU})` }} />
+                <AddToEstimateBtn product={{ ...product, id: `${product.id}-${finalSKU}`, SKU: finalSKU, Name: `${product.Name} (${finalSKU})` }} />
             </div>
           </div>
         </div>
