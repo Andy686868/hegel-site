@@ -29,6 +29,21 @@ export default function ProductInfoTab({
   // Флаг для товаров, которые не настраиваются (Рамки и Коробки)
   const isStaticProduct = isFrame || isBox;
 
+  // Функция для красивого вывода серии: series12 -> 12 серия
+  const formatSeries = (s: string) => {
+    if (!s) return "";
+    return s.replace(/series(\d+)/i, '$1 серия');
+  };
+
+  // Оставляем в информации только 5 полей, которые вы просили
+  const infoSpecs = [
+    { label: 'Тип монтажа', value: product.Type },
+    { label: 'Серия', value: formatSeries(product.Series) }, // Применяем форматирование
+    { label: 'Степень защиты', value: product.Vlaga },
+    { label: 'Материал', value: product.Material },
+    { label: 'Кол-во в упаковке', value: product.PackCount },
+  ].filter(s => s.value && s.value !== 'nan');
+
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
       {/* ЗАГОЛОВОК */}
@@ -139,6 +154,35 @@ export default function ProductInfoTab({
               )
             })}
           </div>
+        </div>
+      )}
+
+      {/* ТАБЛИЦА ХАРАКТЕРИСТИК (ОБЩИЕ) */}
+      {infoSpecs.length > 0 && (
+        <div className="pt-6 space-y-4">
+          <label className="text-[12px] font-bold uppercase text-slate-500 tracking-widest block italic border-b border-slate-200 pb-2">
+            Общие характеристики
+          </label>
+          <div className="overflow-hidden border border-slate-100 rounded-3xl bg-white shadow-sm">
+            <table className="w-full text-left border-collapse">
+              <tbody>
+                {infoSpecs.map((spec, idx) => (
+                  <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-5 text-[10px] uppercase font-bold text-slate-400 w-1/2">{spec.label}</td>
+                    <td className="py-3 px-5 text-xs font-black text-slate-800">{spec.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ПРИМЕЧАНИЕ */}
+      {product.Note && product.Note !== 'nan' && (
+        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-[11px] text-amber-800 font-medium italic">
+          <span className="font-black uppercase not-italic block mb-1">Примечание:</span>
+          {product.Note}
         </div>
       )}
 

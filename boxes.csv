@@ -1,0 +1,89 @@
+﻿const fs = require('fs');
+const csv = require('csv-parser');
+const fetch = require('node-fetch');
+
+const STRAPI_URL = 'http://127.0.0.1:1337';
+const API_TOKEN = 'ВАШ_ТОКЕН'; 
+const COLLECTION_NAME = 'product-boxes'; 
+const CSV_FILE_PATH = 'boxes.csv'; 
+
+// Оставляем только самый минимум исключений, чтобы не мешать импорту b3, b4 и т.д.
+const EXCLUDE_FROM_TECH = [
+    'BaseSKU', 'Name', 'Series', 'Type', 'Slug', 'Note'
+];
+
+const clean = (val) => {
+    if (val === undefined || val === null) return null;
+    const s = String(val).trim();
+    return (s === '' || s.toLowerCase() === 'nan') ? null : s;
+};
+
+const runImport = async () => {
+    const results = [];
+    fs.createReadStream(CSV_FILE_PATH)
+        .pipe(csv({ 
+            separator: ';', 
+            mapHeaders: ({ header }) => header.replace(/^\uFEFF/g, '').trim() 
+        }))
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+            console.log(`🚀 Файл прочитан. Строк: ${results.length}`);
+
+            for (const row of results) {
+                const sku = clean(row.BaseSKU);
+                if (!sku) continue;
+
+                // Сбор данных
+                const techArray = [];
+                Object.keys(row).forEach(key => {
+                    const value = clean(row[key]);
+                    if (!EXCLUDE_FROM_TECH.includes(key) && value !== null) {
+                        techArray.push(`${key}:${value}`);
+                    }
+                });
+
+                const techString = techArray.join('|');
+                
+                // ЛОГ ДЛЯ ПРОВЕРКИ: Печатаем всё, что собрали для одной коробки
+                if (sku === 'КР1102') {
+                    console.log(`🔎 ДИАГНОСТИКА [${sku}]:`);
+                    console.log(`Собрано параметров: ${techArray.length}`);
+                    console.log(`Строка тех. параметров: ${techString}`);
+                }
+
+                const payload = {
+                    Name: clean(row.Name),
+                    BaseSKU: sku,
+                    TechParams: techString, // Сюда теперь точно попадут B1, B2, H, b1, b2, b3, b4, h1, h2
+                    Series: clean(row.Series),
+                    Type: clean(row.Type),
+                    Material: clean(row.Material),
+                    Vlaga: clean(row.Vlaga),
+                    PackCount: clean(row.PackCount),
+                    CenterDist: clean(row.CenterDist)
+                };
+
+                try {
+                    const res = await fetch(`${STRAPI_URL}/api/${COLLECTION_NAME}`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': `Bearer ${API_TOKEN}` 
+                        },
+                        body: JSON.stringify({ data: payload })
+                    });
+                    
+                    if (res.ok) {
+                        console.log(`✅ ${sku} импортирован`);
+                    } else {
+                        const err = await res.json();
+                        console.error(`❌ Ошибка Strapi [${sku}]:`, JSON.stringify(err.error.details || err.error.message));
+                    }
+                } catch (e) {
+                    console.error(`❌ Сетевая ошибка [${sku}]:`, e.message);
+                }
+            }
+        });
+};
+
+runImport();

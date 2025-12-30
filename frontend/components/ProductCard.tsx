@@ -11,8 +11,8 @@ export default function ProductCard({ data }: ProductCardProps) {
   // Если вдруг придут старые данные через .attributes, оставляем поддержку.
   const product = data.attributes || data;
   
-  // Унифицируем поля. В коробках и product2s мы используем BaseSKU
-  const { Name, BaseSKU, SKU, Series, Images, MainImage, Slug } = product;
+  // Добавлены поля Vlaga, InnerSize, Type для поддержки коробок
+  const { Name, BaseSKU, SKU, Series, Images, MainImage, Slug, Vlaga, InnerSize, Type } = product;
   const finalSKU = BaseSKU || SKU || "—";
 
   // Универсальный поиск URL картинки (проверяем MainImage, потом Images)
@@ -48,22 +48,44 @@ export default function ProductCard({ data }: ProductCardProps) {
           )}
           
           {Series && (
-            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm z-10">
               {Series}
+            </span>
+          )}
+
+          {/* НОВОЕ: Отображение IP для коробок */}
+          {Vlaga && (
+            <span className="absolute top-3 right-3 bg-green-600 text-white text-[10px] font-black uppercase px-2 py-1 rounded-md shadow-lg z-10 animate-pulse">
+              {Vlaga}
             </span>
           )}
       </Link>
       
       <div className="p-5 flex flex-col flex-grow">
-        <div className="text-[10px] text-green-700 font-bold mb-1 uppercase tracking-wider opacity-70">
-          Артикул: {finalSKU}
+        <div className="flex justify-between items-start mb-1">
+            <div className="text-[10px] text-green-700 font-bold uppercase tracking-wider opacity-70">
+              Артикул: {finalSKU}
+            </div>
+            {/* НОВОЕ: Отображение размера */}
+            {InnerSize && (
+                <div className="text-[10px] font-black text-gray-400 uppercase italic">
+                    {InnerSize}
+                </div>
+            )}
         </div>
         
         <Link href={`/product/${Slug}`} className="group-hover:text-green-800 transition-colors">
-            <h3 className="text-base font-bold text-gray-900 line-clamp-2 leading-tight mb-4 h-12" title={Name}>
+            <h3 className="text-base font-bold text-gray-900 line-clamp-2 leading-tight mb-2 h-12" title={Name}>
                 {Name}
             </h3>
         </Link>
+
+        {/* НОВОЕ: Тип установки для коробок */}
+        {Type && (
+            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-4">
+                {Type}
+            </div>
+        )}
         
         <div className="mt-auto pt-4 border-t border-gray-100">
             <AddToEstimateBtn product={{...product, SKU: finalSKU}} />

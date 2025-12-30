@@ -7,19 +7,21 @@ async function getProducts() {
   try {
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337';
     
+    // Делаем два запроса параллельно: изделия + коробки
     const [resProducts, resBoxes] = await Promise.all([
       fetch(`${strapiUrl}/api/product2s?populate=*`, { cache: 'no-store' }),
-      // ИСПРАВЛЕНО: было /api/boxes, стало /api/product-boxes
       fetch(`${strapiUrl}/api/product-boxes?populate=*`, { cache: 'no-store' }) 
     ]);
 
     const productsJson = resProducts.ok ? await resProducts.json() : { data: [] };
     const boxesJson = resBoxes.ok ? await resBoxes.json() : { data: [] };
 
+    // Объединяем коллекции в один массив
     const combinedData = [
       ...(productsJson.data || []),
       ...(boxesJson.data || [])
     ].sort((a: any, b: any) => 
+      // Сортируем по дате создания, чтобы новинки были сверху
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
@@ -109,12 +111,12 @@ export default async function Home() {
             <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory hide-scrollbar">
               {products && products.length > 0 ? (
                 products.map((product: any) => (
-                  <div key={`${product.id}-${product.BaseSKU}`} className="min-w-[260px] md:min-w-[300px] snap-start">
+                  <div key={`${product.id}-${product.BaseSKU || product.SKU}`} className="min-w-[260px] md:min-w-[300px] snap-start">
                      <ProductCard data={product} />
                   </div>
                 ))
               ) : (
-                <div className="py-10 text-gray-400 text-sm italic">Товары не найдены. Проверьте подключение к Strapi...</div>
+                <div className="py-10 text-gray-400 text-sm italic">Товары не найдены...</div>
               )}
             </div>
         </div>

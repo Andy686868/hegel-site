@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         pathname: '/uploads/**',
       },
       {
+        protocol: 'http',
+        hostname: '127.0.0.1', // Добавлено для совместимости с локальным API
+        port: '1337',
+        pathname: '/uploads/**',
+      },
+      {
         protocol: 'https',
         hostname: 'placehold.co',
         port: '',

@@ -38,7 +38,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         let foundData = json.data?.[0];
         let foundIsBox = false;
 
-        // 2. Если не нашли, ищем в монтажных коробках (boxes)
+        // 2. Если не нашли, ищем в монтажных коробках (product-boxes)
         if (!foundData) {
           res = await fetch(`${strapiUrl}/api/product-boxes?filters[Slug][$eq]=${slug}&populate=*`);
           json = await res.json();
@@ -47,20 +47,24 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         }
 
         if (foundData) {
-          setProduct(foundData);
+          // Поддержка Strapi 5 (данные могут быть в .attributes или напрямую)
+          const actualData = foundData.attributes || foundData;
+          setProduct(actualData);
           setIsBox(foundIsBox);
           
           // Дефолтные настройки для механизмов
           if (!foundIsBox) {
-            if (foundData.has10A) setSelectedAmp("10"); else if (foundData.has16A) setSelectedAmp("16");
-            const availableColors = foundData.AvailableColors?.split(',').map((c: string) => c.trim()) || [];
+            if (actualData.has10A) setSelectedAmp("10"); else if (actualData.has16A) setSelectedAmp("16");
+            const availableColors = actualData.AvailableColors?.split(',').map((c: string) => c.trim()) || [];
             setSelectedColor(availableColors[0]);
           }
 
           // Установка изображений
-          if (foundData.MainImage?.length > 0) setCurrentMainUrl(foundData.MainImage[0].url);
+          if (actualData.MainImage?.length > 0) setCurrentMainUrl(actualData.MainImage[0].url);
+          else if (actualData.Images?.length > 0) setCurrentMainUrl(actualData.Images[0].url);
+
           // Для коробок схема может быть в TechnicalSketch или SchemaImages
-          const schema = foundData.TechnicalSketch?.url || foundData.SchemaImages?.[0]?.url;
+          const schema = actualData.TechnicalSketch?.url || actualData.SchemaImages?.[0]?.url || actualData.SchemaFiles?.[0]?.url;
           if (schema) setCurrentSchemaUrl(schema);
         }
       } catch (err) { 
@@ -136,7 +140,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           <div className="p-10 lg:p-14 flex flex-col bg-slate-50/30">
             <div className="flex gap-8 mb-8 border-b border-slate-200">
               {[{ id: 'main', label: 'Информация' }, { id: 'pro', label: <span>Инженерам/<br />монтажникам</span> }, 
-                !isBox && { id: 'design', label: 'Дизайнерам' } // Скрываем дизайн для коробок
+                !isBox && { id: 'design', label: 'Дизайнерам' } 
               ].filter(Boolean).map((tab: any) => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`pb-4 text-[12px] font-black uppercase tracking-widest transition-all text-left ${activeTab === tab.id ? 'text-green-700 border-b-4 border-green-700' : 'text-slate-400 hover:text-slate-600'}`}> {tab.label} </button>
               ))}
