@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
+const API_URL = 'https://hegel-backend.onrender.com';
 
 export default function DealersPage() {
   // 1. Статический список дилеров
@@ -30,7 +32,7 @@ export default function DealersPage() {
     setStatus('loading');
 
     try {
-      const response = await fetch('http://localhost:1337/api/dealer-requests', {
+      const response = await fetch(`${API_URL}/api/products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

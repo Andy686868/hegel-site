@@ -1,4 +1,8 @@
-const STRAPI_URL = 'http://localhost:1337/api/products';
+const BASE_URL = 'https://hegel-backend.onrender.com';
+// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
+const STRAPI_URL = `${BASE_URL}/api/products`;
+
+
 
 // 👇👇👇 ВСТАВЬ СЮДА СВОЙ ТОКЕН ИЗ STRAPI (Settings -> API Tokens) 👇👇👇
 const API_TOKEN = '93dee8752e3932e7d8ddd126edbfc1aecd84f3c68fee142497a1fe834cd352250a561366f734ae63a3ea6cdeb796251580059cd609c768db1e001c9b8d04d92ce50f1bbb7fc62decf4a5e97febb6f846751f3ad5e80e7cb6fe1955178b4b218bd9c8e3959afe27d2a1414bd0581e8f61fb5db6ff644079fb349e1b8222b7cc9a'; 

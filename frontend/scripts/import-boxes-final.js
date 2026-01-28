@@ -2,7 +2,8 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const fetch = require('node-fetch');
 
-const STRAPI_URL = 'http://127.0.0.1:1337';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
+const API_URL = 'https://hegel-backend.onrender.com';
 const API_TOKEN = '484b97013bdc9959fc322a2a7e32b7aacd204ebe86b11026f5c18917ff41b22e8a72a23df50c10b91c2b7516cd4852f9610a2568015be6e05823fe0bc7d8e1b7eb93deffc7980003ae75cf448d10063d84b4c3b7e9b84dba813c69dc606f7a51f8c1c1ad7ed91e066c7d3e14d88c1811592d8f5884bdcb3e8b1d0cd13c00fe76'; 
 const COLLECTION_NAME = 'product-boxes'; 
 const CSV_FILE_PATH = 'boxes.csv'; 
@@ -79,7 +80,7 @@ const runImport = async () => {
                 };
 
                 try {
-                    await fetch(`${STRAPI_URL}/api/${COLLECTION_NAME}`, {
+                    await fetch(`${API_URL}/api/${COLLECTION_NAME}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_TOKEN}` },
                         body: JSON.stringify(payload)

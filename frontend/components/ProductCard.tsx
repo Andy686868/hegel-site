@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import AddToEstimateBtn from './AddToEstimateBtn';
+const API_URL = 'https://hegel-backend.onrender.com';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
 
 interface ProductCardProps {
   data: any;
@@ -23,7 +25,7 @@ export default function ProductCard({ data }: ProductCardProps) {
     const url = rawImg?.url || rawImg?.attributes?.url;
     
     if (!url) return null;
-    return url.startsWith('http') ? url : `http://127.0.0.1:1337${url}`;
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
   };
 
   const imgUrl = getImageUrl();

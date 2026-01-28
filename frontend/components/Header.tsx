@@ -6,6 +6,8 @@ import { useEstimateStore } from '@/store/estimate';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
+const API_URL = 'https://hegel-backend.onrender.com';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
 
 export default function Header() {
   const items = useEstimateStore((state) => state.items);
@@ -51,7 +53,7 @@ export default function Header() {
         });
 
         const queryString = filterParts.join('&');
-        const url = `http://localhost:1337/api/products?${queryString}&populate=*&pagination[pageSize]=5`;
+        const url = `${API_URL}/api/products?${queryString}&populate=*&pagination[pageSize]=5`;
         
         const res = await fetch(url);
         const json = await res.json();
@@ -161,8 +163,8 @@ export default function Header() {
                                   const data = item.attributes || item;
                                   let imgUrl = null;
                                   const imgs = data.Images;
-                                  if (imgs?.data?.[0]?.attributes?.url) imgUrl = `http://localhost:1337${imgs.data[0].attributes.url}`;
-                                  else if (Array.isArray(imgs) && imgs[0]?.url) imgUrl = `http://localhost:1337${imgs[0].url}`;
+                                  if (imgs?.data?.[0]?.attributes?.url) imgUrl = `${API_URL}${imgs.data[0].attributes.url}`;
+                                  else if (Array.isArray(imgs) && imgs[0]?.url) imgUrl = `${API_URL}${imgs[0].url}`;
 
                                   return (
                                       <li key={item.id}>

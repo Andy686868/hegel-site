@@ -3,6 +3,8 @@
 import { useEstimateStore } from '@/store/estimate';
 import { useState, useRef, useEffect } from 'react';
 
+const API_URL = 'https://hegel-backend.onrender.com';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
 interface Props {
   product: any;
 }
@@ -22,6 +24,7 @@ export default function AddToEstimateBtn({ product }: Props) {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+
   // Когда включается режим редактирования, ставим фокус в инпут
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -37,10 +40,10 @@ export default function AddToEstimateBtn({ product }: Props) {
     quantity: 1,
     price: 0,
     image: product.Images?.data?.[0]?.attributes?.url 
-             ? `http://localhost:1337${product.Images.data[0].attributes.url}`
-             : (Array.isArray(product.Images) && product.Images[0]?.url 
-                ? `http://localhost:1337${product.Images[0].url}` 
-                : null)
+    ? `${API_URL}${product.Images.data[0].attributes.url}`
+    : (Array.isArray(product.Images) && product.Images[0]?.url 
+       ? `${API_URL}${product.Images[0].url}` 
+       : null)
   };
 
   const handleIncrease = (e: React.MouseEvent) => {

@@ -1,10 +1,12 @@
 "use client";
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
+const API_URL = 'https://hegel-backend.onrender.com';
 
 export default function ProductProTab({ product, isBox }: any) {
   const getUrl = (fileObj: any) => {
     if (!fileObj || !fileObj.url) return null;
     const url = fileObj.url;
-    return url.startsWith('http') ? url : `http://127.0.0.1:1337${url}`;
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
   };
 
   const parseTechParams = (paramsString: string) => {

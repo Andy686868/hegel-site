@@ -4,6 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
+const API_URL = 'https://hegel-backend.onrender.com';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
 
 function SearchResults() {
   const searchParams = useSearchParams();
@@ -23,12 +25,12 @@ function SearchResults() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337';
+
         
         // 1. Запрашиваем обе коллекции одновременно
         const [resMechs, resBoxes] = await Promise.all([
-          fetch(`${strapiUrl}/api/product2s?populate=*&pagination[pageSize]=100`),
-          fetch(`${strapiUrl}/api/product-boxes?populate=*&pagination[pageSize]=100`)
+          fetch(`${API_URL}/api/product2s?populate=*&pagination[pageSize]=100`),
+          fetch(`${API_URL}/api/product-boxes?populate=*&pagination[pageSize]=100`)
         ]);
 
         const jsonMechs = await resMechs.json();

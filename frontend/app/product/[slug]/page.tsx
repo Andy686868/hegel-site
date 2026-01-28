@@ -26,21 +26,22 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [currentSchemaUrl, setCurrentSchemaUrl] = useState<string | null>(null);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
+  // const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
+  const API_URL = 'https://hegel-backend.onrender.com';
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337';
         
         // 1. Пытаемся найти в обычных изделиях (product2s)
-        let res = await fetch(`${strapiUrl}/api/product2s?filters[Slug][$eq]=${slug}&populate=*`);
+        let res = await fetch(`${API_URL}/api/product2s?filters[Slug][$eq]=${slug}&populate=*`);
         let json = await res.json();
         let foundData = json.data?.[0];
         let foundIsBox = false;
 
         // 2. Если не нашли, ищем в монтажных коробках (product-boxes)
         if (!foundData) {
-          res = await fetch(`${strapiUrl}/api/product-boxes?filters[Slug][$eq]=${slug}&populate=*`);
+          res = await fetch(`${API_URL}/api/product-boxes?filters[Slug][$eq]=${slug}&populate=*`);
           json = await res.json();
           foundData = json.data?.[0];
           foundIsBox = !!foundData;
@@ -90,7 +91,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     if (rule && rule.amps && !rule.amps.includes(selectedAmp)) setSelectedAmp(rule.amps[0]);
   };
 
-  const getStrapiImageUrl = (url: string | null) => url ? (url.startsWith('http') ? url : `http://127.0.0.1:1337${url}`) : '/no-photo.png';
+  const getStrapiImageUrl = (url: string | null) => url ? (url.startsWith('http') ? url : `${API_URL}${url}`) : '/no-photo.png';
 
   const exportAsImage = async () => {
     if (!previewRef.current) return;

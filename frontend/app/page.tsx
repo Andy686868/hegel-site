@@ -2,15 +2,16 @@ import ProductCard from "@/components/ProductCard";
 import HeroCategories from "@/components/HeroCategories"; 
 import Image from "next/image";
 import Link from "next/link";
+const API_URL = 'https://hegel-backend.onrender.com';
 
 async function getProducts() {
   try {
-    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337';
+    // const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:1337';
     
     // Делаем два запроса параллельно: изделия + коробки
     const [resProducts, resBoxes] = await Promise.all([
-      fetch(`${strapiUrl}/api/product2s?populate=*`, { cache: 'no-store' }),
-      fetch(`${strapiUrl}/api/product-boxes?populate=*`, { cache: 'no-store' }) 
+      fetch(`${API_URL}/api/product2s?populate=*`, { cache: 'no-store' }),
+      fetch(`${API_URL}/api/product-boxes?populate=*`, { cache: 'no-store' }) 
     ]);
 
     const productsJson = resProducts.ok ? await resProducts.json() : { data: [] };
