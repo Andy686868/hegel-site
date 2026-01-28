@@ -6,8 +6,8 @@ export default {
     console.log('--- ДАННЫЕ ИЗ БАЗЫ ---');
     console.log(JSON.stringify(result, null, 2));
 
-    const TELEGRAM_TOKEN = '8583378436:AAGAGiPBcC8kiIG5kS9PqrUQEcRTFNN_4pM';
-    const CHAT_ID = '1708569556';
+    const TELEGRAM_TOKEN = '';
+    const CHAT_ID = '';
 
     // 2. ФУНКЦИЯ ПОИСКА ПОЛЯ (независимо от регистра)
     const getVal = (obj: any, key: string) => obj[key] || obj[key.toLowerCase()] || obj[key.charAt(0).toUpperCase() + key.slice(1)] || '—';
