@@ -3,10 +3,29 @@ module.exports = [
   'strapi::errors',
   'strapi::security',
   {
-    name: 'strapi::cors',
+    name: 'strapi::security',
     config: {
-      header: '*',
-      origin: ['*'], // 👈 ЗВЕЗДОЧКА разрешает доступ всем (localhost, 127.0.0.1 и т.д.)
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': [
+            "'self'",
+            'data:',
+            'blob:',
+            'market-assets.strapi.io',
+            'res.cloudinary.com', // <--- ВОТ ЭТО ВАЖНО
+          ],
+          'media-src': [
+            "'self'",
+            'data:',
+            'blob:',
+            'market-assets.strapi.io',
+            'res.cloudinary.com', // <--- И ВОТ ЭТО
+          ],
+          upgradeInsecureRequests: null,
+        },
+      },
     },
   },
   'strapi::poweredBy',
