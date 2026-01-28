@@ -1,7 +1,7 @@
-module.exports = [
+export default [
   'strapi::logger',
   'strapi::errors',
-  'strapi::security',
+  /* --- Начало настройки безопасности для Cloudinary --- */
   {
     name: 'strapi::security',
     config: {
@@ -14,20 +14,22 @@ module.exports = [
             'data:',
             'blob:',
             'market-assets.strapi.io',
-            'res.cloudinary.com', // <--- ВОТ ЭТО ВАЖНО
+            'res.cloudinary.com',
           ],
           'media-src': [
             "'self'",
             'data:',
             'blob:',
             'market-assets.strapi.io',
-            'res.cloudinary.com', // <--- И ВОТ ЭТО
+            'res.cloudinary.com',
           ],
           upgradeInsecureRequests: null,
         },
       },
     },
   },
+  /* --- Конец настройки --- */
+  'strapi::cors', // <--- Вот он, потерянный боец!
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',
