@@ -8,5 +8,11 @@ export default (config: UserConfig) => {
         '@': '/src',
       },
     },
+    // 👇 ВОТ ЭТО РЕШАЕТ ПРОБЛЕМУ
+    server: {
+      allowedHosts: [
+        'all' 
+      ],
+    },
   });
 };

@@ -5,10 +5,8 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      origin: ['http://localhost:3000'], // ваш адрес фронтенда
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
-      headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
-      keepHeaderOnError: true,
+      header: '*',
+      origin: ['*'], // 👈 ЗВЕЗДОЧКА разрешает доступ всем (localhost, 127.0.0.1 и т.д.)
     },
   },
   'strapi::poweredBy',
