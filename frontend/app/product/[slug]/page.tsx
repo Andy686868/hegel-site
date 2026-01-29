@@ -125,10 +125,27 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <div className={`relative transition-all duration-500 overflow-hidden group rounded-2xl ${activeTab === 'design' ? 'w-[320px] h-[320px]' : 'w-[420px] h-[420px]'}`} onMouseMove={handleMouseMove}>
                 <Image src={activeTab === 'design' ? getDesignerImage() : (activeTab === 'pro' ? getStrapiImageUrl(currentSchemaUrl) : getStrapiImageUrl(currentMainUrl))} alt="view" fill className={`object-contain transition-transform duration-200 ${activeTab === 'main' ? 'group-hover:scale-[2.5] cursor-zoom-in' : ''} ${activeTab !== 'pro' ? 'drop-shadow-2xl' : ''}`} style={activeTab === 'main' ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}} unoptimized />
             </div>
-            {activeTab === 'main' && product.MainImage?.length > 1 && (
-                <div className="flex gap-2 mt-8">{(product.MainImage || []).map((img: any) => (
-                    <button key={img.url} onClick={() => setCurrentMainUrl(img.url)} className={`w-14 h-14 rounded-xl border-2 overflow-hidden shadow-sm transition-all ${currentMainUrl === img.url ? 'border-yellow-400 scale-110 shadow-lg' : 'border-slate-600 opacity-50'}`}><Image src={getStrapiImageUrl(img.url)} alt="thumb" width={56} height={56} className="object-cover" unoptimized /></button>
-                  ))}</div>
+            {/* Собираем все картинки в один массив для галереи */}
+            {activeTab === 'main' && (
+              <div className="flex gap-2 mt-8 flex-wrap justify-center">
+                {[...(product.MainImage || []), ...(product.Images || [])].map((img: any, idx: number) => (
+                  <button 
+                    key={idx} 
+                    onClick={() => setCurrentMainUrl(img.url)} 
+                    className={`w-14 h-14 rounded-xl border-2 overflow-hidden shadow-sm transition-all 
+                      ${currentMainUrl === img.url ? 'border-green-600 scale-110 shadow-lg' : 'border-slate-200 opacity-60 hover:opacity-100'}`}
+                  >
+                    <Image 
+                      src={getStrapiImageUrl(img.url)} 
+                      alt={`thumb-${idx}`} 
+                      width={56} 
+                      height={56} 
+                      className="object-cover" 
+                      unoptimized 
+                    />
+                  </button>
+                ))}
+              </div>
             )}
             {activeTab !== 'design' && (
               <div className="mt-8 bg-white/90 backdrop-blur-md px-10 py-4 rounded-3xl shadow-xl border border-white/50 text-center">
